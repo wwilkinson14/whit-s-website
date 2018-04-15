@@ -10,16 +10,16 @@ weight = 5
 # List your academic interests.
 [interests]
   interests = [
-    "Artificial Intelligence",
-    "Computational Linguistics",
-    "Information Retrieval"
+    "Spatial Analysis",
+    "Ecosystem Management",
+    "Land use Regulation"
   ]
 
 # List your qualifications (such as academic degrees).
 [[education.courses]]
-  course = "PhD in Artificial Intelligence"
-  institution = "Stanford University"
-  year = 2012
+  course = "Master Environmental Science & Management"
+  institution = "University of California, Santa Barbara"
+  year = 2013
 
 [[education.courses]]
   course = "MEng in Artificial Intelligence"
@@ -35,6 +35,5 @@ weight = 5
 
 # Biography
 
-Lena Smith is a professor of artificial intelligence at the Stanford AI Lab. Her research interests include distributed robotics, mobile computing and programmable matter. She leads the Robotic Neurobiology group, which develops self-reconfiguring robots, systems of self-organizing robots, and mobile sensor networks.
+Whitney Wilkinson is an amateur data scientist with an interest in learning the basics of acquiring, wrangling, analyzing, and visualizing complex environmental data. She currently serves as a biologist and land use planner with Recon Environmental, an environmental consulting company. She hopes to apply data science tools to her work managing and regulating natural resources. 
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed neque elit, tristique placerat feugiat ac, facilisis vitae arcu. Proin eget egestas augue. Praesent ut sem nec arcu pellentesque aliquet. Duis dapibus diam vel metus tempus vulputate. 
