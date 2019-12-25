@@ -1,0 +1,166 @@
+---
+title: "National Parks Visitation in California"
+author: "Whitney Wilkinson"
+date: "4/15/2018"
+output: html_document
+---
+
+I love the National Parks. Some see very few visitors, and some have millions of visitors every year and are being loved-to-death. The National Parks Service puts out a dataset on the number of visitors at each of their parks, monuments, historic parks, preserves, and battlefields over time. Visitation data is listed by region, state, and year.  
+
+![NPS Data Table](/Users/wwilkinson414/Documents/R Stats Class/R Practice/Blogdown/NPS Post/images/nps_table_img.png)
+
+As a Californian, I was naturally curious about parks there, and found it easier to filter the data and work with only the National Parks found there.  
+
+## My Questions:
+
+1. How many parks/monuments are there in CA?
+2. What does visitation look like over time for all National Parks in CA? 
+3. Which years in CA history had the lowest total visitation?
+
+The first step is to make sure the tidyverse library is on hand and reading in your csv file with the readr function.
+
+```{r, echo=TRUE, results = 'hide'}
+library(tidyverse)
+nps <- read_csv("np_visit.csv")
+```
+
+
+## Question #1 
+### How many National Parks and National Monuments are there in California?
+
+
+1. Originally I thought filter only works for "numeric, logical, or complex types", so I  added the function "grepl" to ask filter to look for a string, but it will actually do this without grepl. 
+
+2. Next, I filtered the nps dataset for only the parks that occur in California using the "filter" and "unique" functions. 
+
+3. Then I created CA_Parks which is a vector of park names in California, with each name only occurring once, using the "unique" function. 
+
+
+
+```{r, echo= TRUE, results= TRUE}
+CA <- filter(nps, grepl("CA", state))
+
+CA_parks <- unique(CA$park_name)
+length(CA_parks)
+```
+
+Answer: [1] 26
+
+## Question #1 Answer 
+There are 26 parks (this includes monuments, historic parks, etc.)
+
+
+
+
+
+## Question #2 
+### What is the visitation over time for all National Parks in California? 
+
+
+1. I filtered the CA data frame for National Parks in CA
+
+```{r, echo= TRUE}
+CA_parks_df <- nps %>% 
+  filter(state =="CA" & type =="National Park")
+```
+
+2. Then I plotted CA park visitors per year
+
+```{r echo=TRUE, fig.show= 'markup'}
+ggplot(data = CA_parks_df, aes(x = year, y= visitors)) +
+ geom_line(aes(color= park_name)) +
+  xlab("Year") +
+  ylab("Number of Visitors per Year") +
+  ggtitle("CA National Parks Visitation 1934 - 2016")
+```
+
+
+
+3. Super cool but a little muddy. Lets look at just the past 10 years by filtering for years between 2006 and 2016.
+
+
+
+```{r, echo= TRUE}
+CA_parks06_16 <- filter(CA_parks_df, year >= 2006)
+ggplot(data = CA_parks06_16, aes(x = year, y= visitors)) +
+  geom_point(aes(color= park_name)) +
+  xlab("Year") +
+  ylab("Number of Visitors per Year") +
+  ggtitle("CA National Parks Visitation 2006-2016")+
+  geom_line(aes(color = park_name)) +
+  geom_point(aes(color =park_name))
+```
+
+ 
+
+4. Next I wanted to look at the mean visitation for each CA National Park over the previous 10 years. Notice the uptick in visitation around 2016, likely a result of the Centennial. 
+
+
+```{r, echo = TRUE, fig.show= 'markup'}
+meanvisit <- CA_parks06_16 %>% group_by(park_name) %>% 
+  summarize(mean(visitors))
+  colnames(meanvisit)[2] <- "mean_visit"
+
+
+ visit06 <- ggplot(meanvisit, aes(park_name, mean_visit, color = park_name, fill = park_name))
+  visit06 +geom_bar(stat = "identity") +
+    xlab("park") +
+    ylab("Mean Visitors per Year") +
+    ggtitle("Mean Park Visitors 2006-2016") +
+    #theme_classic()
+    theme(axis.text.x=element_blank(), axis.title.x=element_blank())
+```
+
+
+```{r, echo = TRUE, results= 'markup'}
+CA_low <- CA %>% group_by(year) %>% 
+  summarize(total = sum(visitors))
+ggplot(data = CA_low, aes(x = year, y = total))+
+  geom_line() +
+    ylab("Total Park Visitors per Year") +
+    ggtitle("Total CA National Park Visitors 1934-2016")
+    #theme_classic()
+```
+
+
+
+## Question #2 Answer
+Some National Parks have had fairly continuous growth throughout their history. Yosemite and Joshua Tree have substantial growth in visitation since the post-WWII era. Some National Parks have had mild growth in visitation over the history. Many have had relatively flat growth over the past few decades. This is the case for Channel Islands National Park and Marine Sanctuary.
+  
+
+## Question #3
+### 3. Which years in California history had the lowest total visitation?
+
+
+Did the depression or wars effect visitation? Or has the Parks' visitation grown steadily since they were established? 
+
+
+
+1. To investigate, I created a "total" column and populated it using the "sum" function and condensed the remaining columns in the tibble into just the two I want to keep, "year" and "total" 
+
+
+ 2. To find the year with the lowest total visitation, I found the minimum. 
+
+
+```{r, echo = TRUE}
+low_visit <- min(CA_low$total)
+## [1] 1000
+```
+
+3. Only 1,000 people visited during the lowest visitation year, but what year was it? To find out, I filtered the dataframe to return the row with the minimum value. 
+
+```{r, echo = TRUE}
+low_year <- CA_low %>% filter(total == 1000)
+print(low_year)
+```
+
+
+## Question 3 Answer 
+
+1904 and 1905.....the first two years the parks were open in California. The data show variable growth of park visitation that managed to grow each year from its humble beginnings. 
+
+
+
+
+
+
